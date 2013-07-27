@@ -60,14 +60,6 @@ def autoreload_config_file (config_file):
                 return cfg
 
 
-
-
-class TextRectException:
-    def __init__(self, message = None):
-        self.message = message
-    def __str__(self):
-        return self.message
-
 def render_textrect(string, font, rect, text_color, background_color, justification=0):
     """Returns a surface containing the passed text string, reformatted
     to fit within the given rect, word-wrapping as necessary. The text
@@ -141,6 +133,12 @@ def render_textrect(string, font, rect, text_color, background_color, justificat
         accumulated_height += font.size(line)[1]
 
     return surface
+
+class TextRectException:
+    def __init__(self, message = None):
+        self.message = message
+    def __str__(self):
+        return self.message
     
     
     
@@ -305,8 +303,9 @@ class mytwitter:
     
 if __name__ == '__main__':
 
-    # Create an instance of the PyScope class
     config_file = 'rpi_twitter.yml'
+
+    # Create an instance of the PyScope class    
     try:
 		scope = pyscope()
 
@@ -315,10 +314,10 @@ if __name__ == '__main__':
 		logger.error ("\t=> %s" % e)
 		pygame.quit()
 
-	try:
-		twit = mytwitter()
+    try:
+        twit = mytwitter()
     except Exception as e:
-		logger.error ("Error loading twitter instance")
+        logger.error ("Error loading twitter instance")
         logger.error ("\t=> %s" % e)
 		
     ip = get_ip_address('eth0')
@@ -334,7 +333,7 @@ if __name__ == '__main__':
             status = methodtoCall(cfg[choice])
         else:
             status = methodtoCall()
-            
+
 		try:
             for mesg in status:
             scope.main(HTMLparser.unescape(mesg.text), mesg.user.screen_name)
