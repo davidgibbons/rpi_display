@@ -308,15 +308,17 @@ if __name__ == '__main__':
     # Create an instance of the PyScope class
     config_file = 'rpi_twitter.yml'
     try:
-				scope = pyscope()
+		scope = pyscope()
+
     except Exception as e:
-				logger.error ("Error loading pygame class")
-				logger.error ("\t=> %s" % e)
-				pygame.quit()
-		try:
-				twit = mytwitter()
+		logger.error ("Error loading pygame class")
+		logger.error ("\t=> %s" % e)
+		pygame.quit()
+
+	try:
+		twit = mytwitter()
     except Exception as e:
-				logger.error ("Error loading twitter instance")
+		logger.error ("Error loading twitter instance")
         logger.error ("\t=> %s" % e)
 		
     ip = get_ip_address('eth0')
@@ -332,11 +334,12 @@ if __name__ == '__main__':
             status = methodtoCall(cfg[choice])
         else:
             status = methodtoCall()
+            
 		try:
-        for mesg in status:
+            for mesg in status:
             scope.main(HTMLparser.unescape(mesg.text), mesg.user.screen_name)
-    except Exception as e:
-				logger.error ("Error reading status")
-        logger.error ("\t=> %s" % e)
-        pygame.quit()
+        except Exception as e:
+			logger.error ("Error reading status")
+            logger.error ("\t=> %s" % e)
+            pygame.quit()
         
