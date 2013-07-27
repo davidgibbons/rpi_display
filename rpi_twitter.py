@@ -255,7 +255,7 @@ class mytwitter:
                 res = self.api.GetSearch(term, count)
             if search_type == "user":
                 res = self.api.GetUserTimeline(count, screen_name=term)
-        except e:
+        except Exception as e:
             logger.error("Problem with search for[%s : %s ]" % [search_type, term])
             logger.error("\t => %s" % e )
         else:
@@ -329,6 +329,7 @@ if __name__ == '__main__':
     ip = get_ip_address('eth0')
     if ip: 
         scope.main("Our IP appears to be: %s" % ip)
+    else:
         scope.main("Problem reading ip address, we may not work")
 
     while True:
