@@ -250,10 +250,16 @@ class mytwitter:
         self.api = twitter.Api(**twitter_config)
 
     def search (self, search_type, term, count=5):
-        if search_type == "tag":
-            return self.api.GetSearch(term, count)
-        if search_type == "user":
-            return self.api.GetUserTimeline(count, screen_name=term)
+        try:
+            if search_type == "tag":
+                res = self.api.GetSearch(term, count)
+            if search_type == "user":
+                res = self.api.GetUserTimeline(count, screen_name=term)
+        except e:
+            logger.error("Problem with search for[%s : %s ]" % [search_type, term])
+            logger.error("\t => %s" % e )
+        else:
+            return res
 
     def users (self, users=None):
         """ Expects a list of users to pick from """
