@@ -26,7 +26,6 @@ def configure (config_file):
     if not cfg:
         logger.error ("Aborting")
         raise SystemExit
-
     return cfg
 
 
@@ -47,15 +46,15 @@ def autoreload_config_file (config_file):
     logger.warn ('autoreloading config')
     modified = os.stat (config_file).st_mtime
     global modify_time
-    if not modify_time:
+    if modify_time == modified:
+        logger.error ("Skipping reload, previous configuration remains in effect.")
+        return        
+    elif not modify_time:
         modify_time = modified
-        return configure (config_file)
-    if modify_time != modified:
+    else:
         logger.warn ('Modified %s, reloading configuration' % config_file)
         modify_time = modified
-        return configure (config_file)
-    else:
-        logger.error ("Skipping reload, previous configuration remains in effect.")
+    return configure (config_file)
 
 
 def render_textrect(string, font, rect, text_color, background_color, justification=0):
@@ -332,7 +331,8 @@ if __name__ == '__main__':
         logger.error ("\t=> %s" % e)
 
     while True:
-        cfg = autoreload_config_file(config_file)
+        new_cfg = autoreload_config_file(config_file)
+        cfg = new_cfg if new_cfg
         choice = random.choice(['users','tags'])
         methodtoCall = getattr(twit, choice)
         if cfg:
