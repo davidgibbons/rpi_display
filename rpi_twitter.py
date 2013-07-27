@@ -256,7 +256,8 @@ class mytwitter:
             if search_type == "user":
                 res = self.api.GetUserTimeline(count, screen_name=term)
         except Exception as e:
-            logger.error("Problem with search for[%s : %s ]" % [search_type, term])
+            logger.error("Problem with search for: %s" % search_type)
+            logger.error("\t with term: %s" % term)
             logger.error("\t => %s" % e )
         else:
             return res
