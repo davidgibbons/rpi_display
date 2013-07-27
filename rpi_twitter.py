@@ -311,27 +311,27 @@ class mytwitter:
 if __name__ == '__main__':
 
     config_file = 'rpi_twitter.yml'
+    parser = HTMLParser.HTMLParser()
 
     # Create an instance of the PyScope class    
     try:
 		scope = pyscope()
-
     except Exception as e:
 		logger.error ("Error loading pygame class")
 		logger.error ("\t=> %s" % e)
 		pygame.quit()
 
-    #try:
-    twit = mytwitter()
-    #except Exception as e:
-    #    logger.error ("Error loading twitter instance")
-    #    logger.error ("\t=> %s" % e)
-    parser = HTMLParser.HTMLParser()
     ip = get_ip_address('eth0')
     if ip: 
-        scope.main("Our IP appears to be: %s" % ip)
+        scope.main("Our IP appears to be: %s" % ip, timeout=10)
     else:
         scope.main("Problem reading ip address, we may not work")
+
+    try:
+        twit = mytwitter()
+    except Exception as e:
+        logger.error ("Error loading twitter instance")
+        logger.error ("\t=> %s" % e)
 
     while True:
         cfg = autoreload_config_file(config_file)
