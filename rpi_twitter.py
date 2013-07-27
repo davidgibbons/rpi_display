@@ -325,7 +325,7 @@ if __name__ == '__main__':
     #except Exception as e:
     #    logger.error ("Error loading twitter instance")
     #    logger.error ("\t=> %s" % e)
-	parser = HTMLparser.HTMLParser()
+    parser = HTMLparser.HTMLParser()
     ip = get_ip_address('eth0')
     if ip: 
         scope.main("Our IP appears to be: %s" % ip)
