@@ -314,11 +314,11 @@ if __name__ == '__main__':
 		logger.error ("\t=> %s" % e)
 		pygame.quit()
 
-    try:
-        twit = mytwitter()
-    except Exception as e:
-        logger.error ("Error loading twitter instance")
-        logger.error ("\t=> %s" % e)
+    #try:
+    twit = mytwitter()
+    #except Exception as e:
+    #    logger.error ("Error loading twitter instance")
+    #    logger.error ("\t=> %s" % e)
 		
     ip = get_ip_address('eth0')
     if ip: 
