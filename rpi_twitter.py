@@ -252,9 +252,9 @@ class mytwitter:
     def search (self, search_type, term, count=5):
         try:
             if search_type == "tag":
-                res = self.api.GetSearch(term, count)
+                res = self.api.GetSearch(temr=term, count=count)
             if search_type == "user":
-                res = self.api.GetUserTimeline(count, screen_name=term)
+                res = self.api.GetUserTimeline(screen_name=term, count=count)
         except Exception as e:
             logger.error("Problem with search for: %s" % search_type)
             logger.error("\t with term: %s" % term)
