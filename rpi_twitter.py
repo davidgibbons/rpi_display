@@ -309,24 +309,34 @@ if __name__ == '__main__':
     config_file = 'rpi_twitter.yml'
     try:
         scope = pyscope()
-        twit = mytwitter()
-        ip = get_ip_address('eth0')
-        if ip: 
-            scope.main("Our IP appears to be: %s" % ip)
-            scope.main("Problem reading ip address, we may not work")
-
-        while True:
-            cfg = autoreload_config_file(config_file)
-            choice = random.choice(['users','tags'])
-            methodtoCall = getattr(twit, choice)
-            if cfg:
-                status = methodtoCall(cfg[choice])
-            else:
-                status = methodtoCall()
-
-            for mesg in status:
-                scope.main(HTMLparser.unescape(mesg.text), mesg.user.screen_name)
     except Exception as e:
+				logger.error ("Error loading pygame class")
+        logger.error ("\t=> %s" % e)
+        pygame.quit()
+		try:
+        twit = mytwitter()
+    except Exception as e:
+				logger.error ("Error loading twitter instance")
+        logger.error ("\t=> %s" % e)
+		
+    ip = get_ip_address('eth0')
+    if ip: 
+        scope.main("Our IP appears to be: %s" % ip)
+        scope.main("Problem reading ip address, we may not work")
+
+    while True:
+        cfg = autoreload_config_file(config_file)
+        choice = random.choice(['users','tags'])
+        methodtoCall = getattr(twit, choice)
+        if cfg:
+            status = methodtoCall(cfg[choice])
+        else:
+            status = methodtoCall()
+		try:
+        for mesg in status:
+            scope.main(HTMLparser.unescape(mesg.text), mesg.user.screen_name)
+    except Exception as e:
+				logger.error ("Error reading status")
         logger.error ("\t=> %s" % e)
         pygame.quit()
         
