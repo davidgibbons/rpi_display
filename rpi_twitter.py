@@ -12,10 +12,9 @@ logger = logging.getLogger ('rpi_twitter')
 def load_config_file (config_file): 
     try:
         cfg = yaml.load (file (config_file))
-    except Exception, e:
-        logger.error ("\t=> %s" % e.problem)
-        logger.error ("\t=> %s" % e.problem_mark)
+    except Exception as e:
         logger.error ("Syntax error in configuration file:")
+        logger.error ("\t=> %s" % e) 
     else:
         return cfg 
 
