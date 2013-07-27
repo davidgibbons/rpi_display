@@ -249,9 +249,9 @@ class mytwitter:
     def search (self, search_type, term, count=5):
         try:
             if search_type == "tag":
-                res = self.api.GetSearch(term=term, count=count)
+                res = self.api.GetSearch(term="#%s"%term, count=count)
             if search_type == "user":
-                res = self.api.GetUserTimeline(screen_name=term, count=count)
+                res = self.api.GetUserTimeline(screen_name="@%s"%term, count=count)
         except Exception as e:
             logger.error("Problem with search for: %s" % search_type)
             logger.error("\t with term: %s" % term)
@@ -263,41 +263,41 @@ class mytwitter:
         """ Expects a list of users to pick from """
         if users == None:
             users = ['@DepressedDarth',
-             '@DEVOPS_BORAT',
-             '@BigDataBorat',
-             '@notzuckerberg',
-             '@DeathStarPR',
-             '@TheBatman',
-             '@drunkhulk',
-             '@OhWonka',
-             '@mr_mustash',
-             '@emilyst',
-             '@puppetlabs',
-             '@joshland',
-             '@eff',
-             '@ronwyden',
-             '@kartar',
+             'DEVOPS_BORAT',
+             'BigDataBorat',
+             'notzuckerberg',
+             'DeathStarPR',
+             'TheBatman',
+             'drunkhulk',
+             'OhWonka',
+             'mr_mustash',
+             'emilyst',
+             'puppetlabs',
+             'joshland',
+             'eff',
+             'ronwyden',
+             'kartar',
              
             ]
         return self.search("user", random.choice(users))
         
     def tags (self, tags=None):
         if tags == None:
-            tags = ['#geek',
-                    '#linux',
-                    '#devops',
-                    '#sysadmin',
-                    '#tech',
-                    '#unix',
-                    '#linux',
-                    '#automation',
-                    '#portland',
-                    '#pdx',
-                    '#keepPortlandweird',
-                    '#nerdlife',
-                    '#nerd',
-                    '#hadoop',
-                    '#puppet',
+            tags = ['geek',
+                    'linux',
+                    'devops',
+                    'sysadmin',
+                    'tech',
+                    'unix',
+                    'linux',
+                    'automation',
+                    'portland',
+                    'pdx',
+                    'keepPortlandweird',
+                    'nerdlife',
+                    'nerd',
+                    'hadoop',
+                    'puppet',
                     ]
                     
         return self.search("tag", random.choice(tags))
