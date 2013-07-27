@@ -42,22 +42,20 @@ def get_ip_address(ifname):
         return ipaddr
 
 modify_time = None
+
 def autoreload_config_file (config_file):
-    logger.warn ('autoreload on config enabled')
-    def reload_options_on_update (config_file):
-        modified = os.stat (config_file).st_mtime
-        global modify_time
-        if not modify_time:
-            modify_time = modified
-            return
-        if modify_time != modified:
-            logger.warn ('Modified %s, reloading configuration' % config_file)
-            modify_time = modified
-            cfg = load_config_file ()
-            if not cfg:
-                logger.error ("Skipping reload, previous configuration remains in effect.")
-            else:
-                return cfg
+    logger.warn ('autoreloading config')
+    modified = os.stat (config_file).st_mtime
+    global modify_time
+    if not modify_time:
+        modify_time = modified
+        return configure (config_file)
+    if modify_time != modified:
+        logger.warn ('Modified %s, reloading configuration' % config_file)
+        modify_time = modified
+        return configure (config_file)
+    else:
+        logger.error ("Skipping reload, previous configuration remains in effect.")
 
 
 def render_textrect(string, font, rect, text_color, background_color, justification=0):
