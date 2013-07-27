@@ -248,7 +248,7 @@ class pyscope :
 
 class mytwitter:
     def __init__(self):
-        twitter_config = configure("~/.twitter.yml")
+        twitter_config = configure("twitter.yml")
         self.api = twitter.Api(**twitter_config)
 
     def search (self, search_type, term, count=5):
