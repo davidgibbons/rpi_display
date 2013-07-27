@@ -1,7 +1,6 @@
 #!/usr/bin/python
 
-import os, pygame, time, random, twitter, socket, fcntl, struct, yaml, logging
-from HTMLParser import HTMLParser
+import os, pygame, time, random, twitter, socket, fcntl, struct, yaml, logging, HTMLParser
 logging.basicConfig()
 
 logger = logging.getLogger ('rpi_twitter')
@@ -252,7 +251,7 @@ class mytwitter:
     def search (self, search_type, term, count=5):
         try:
             if search_type == "tag":
-                res = self.api.GetSearch(temr=term, count=count)
+                res = self.api.GetSearch(term=term, count=count)
             if search_type == "user":
                 res = self.api.GetUserTimeline(screen_name=term, count=count)
         except Exception as e:
@@ -326,7 +325,7 @@ if __name__ == '__main__':
     #except Exception as e:
     #    logger.error ("Error loading twitter instance")
     #    logger.error ("\t=> %s" % e)
-		
+	parser = HTMLparser.HTMLParser()
     ip = get_ip_address('eth0')
     if ip: 
         scope.main("Our IP appears to be: %s" % ip)
@@ -343,7 +342,7 @@ if __name__ == '__main__':
             status = methodtoCall()
         try:
             for mesg in status:
-                scope.main(HTMLparser.unescape(mesg.text), mesg.user.screen_name)
+                scope.main(parser.unescape(mesg.text), mesg.user.screen_name)
         except Exception as e:
             logger.error ("Error reading status")
             logger.error ("\t=> %s" % e)
