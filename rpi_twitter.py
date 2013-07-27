@@ -332,7 +332,8 @@ if __name__ == '__main__':
 
     while True:
         new_cfg = autoreload_config_file(config_file)
-        cfg = new_cfg if new_cfg
+        if new_cfg:
+            cfg = new_cfg
         choice = random.choice(['users','tags'])
         methodtoCall = getattr(twit, choice)
         if cfg:
