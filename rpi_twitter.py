@@ -333,12 +333,11 @@ if __name__ == '__main__':
             status = methodtoCall(cfg[choice])
         else:
             status = methodtoCall()
-
-		try:
+        try:
             for mesg in status:
-            scope.main(HTMLparser.unescape(mesg.text), mesg.user.screen_name)
+                scope.main(HTMLparser.unescape(mesg.text), mesg.user.screen_name)
         except Exception as e:
-			logger.error ("Error reading status")
+            logger.error ("Error reading status")
             logger.error ("\t=> %s" % e)
             pygame.quit()
         
