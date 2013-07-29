@@ -200,10 +200,10 @@ class pyscope :
 
         # Build our app logo
         font = pygame.font.Font(None, font_size)
-        text_surface = font.render('Twitter (%s)' % "0.1", 
-            True, (255, 255, 255))  # White text
+        #text_surface = font.render('Twitter (%s)' % "0.1", 
+        #    True, (255, 255, 255))  # White text
         # Blit the text at 10, 0
-        self.screen.blit(text_surface, (15, 15))
+        #self.screen.blit(text_surface, (15, 15))
         
         
         try:
