@@ -180,16 +180,8 @@ class pyscope :
     def __del__(self):
         "Destructor to make sure pygame shuts down, etc."
 
-    def main(self, text, name="Management", timeout=30):
-        width, heigth = (656, 416)
+    def display(self, text, name="Management", timeout=30, text_color=(255, 255, 0)):
         padding = 20
-        yellow = (255, 255, 0)
-        white = (255, 255, 255)
-        red = (255, 0, 0)
-        green = (0, 255, 0)
-        blue = (0, 100, 200)
-        black = (0, 0, 0)
-
         font_size = 45
         self.screen.fill((0, 0, 0))
         pygame.display.update()
@@ -200,7 +192,7 @@ class pyscope :
             # Render a quote
             my_rect = pygame.Rect((25, 15, self.size[0]-10, self.size[1]-10))
             text_surface = render_textrect(text, font, my_rect,
-                random.choice([blue, green, yellow]), black, 0)
+                text_color, (0,0,0), 0)
         except TextRectException:
             text_surface = render_textrect("Error loading tweet",
                 font, my_rect, blue, black, 0)
@@ -208,15 +200,13 @@ class pyscope :
         # Blit the text
         self.screen.blit(text_surface, (15, 25))
 
-
-
         # Quote byline, who wrote this kernel of knowledge
+        # Colored yellow, black background
         text_surface = font.render('@%s' % name,
-            True, yellow, black)
-        name_placement = width - (padding + text_surface.get_width())
+            True, (255, 255, 0), (0, 0, 0))
+        name_placement = self.size[0] - (padding + text_surface.get_width())
         # Blit the text
         self.screen.blit(text_surface, (name_placement, self.size[1]-30))
-
 
         # Update the display
         pygame.display.update()
@@ -262,9 +252,13 @@ class mytwitter:
 
 
 
-
 if __name__ == '__main__':
-
+    yellow = (255, 255, 0)
+    white = (255, 255, 255)
+    red = (255, 0, 0)
+    green = (0, 235, 0)
+    blue = (0, 100, 200)
+    black = (0, 0, 0)
     config_file = 'rpi_twitter.yml'
     parser = HTMLParser.HTMLParser()
 
@@ -278,9 +272,9 @@ if __name__ == '__main__':
 
     ip = get_ip_address()
     if ip:
-        scope.main("Our IP appears to be: %s" % ip, timeout=10)
+        scope.display("Our IP appears to be: %s" % ip, timeout=10)
     else:
-        scope.main("Problem reading ip address, we may not work")
+        scope.display("Problem reading ip address, we may not work")
 
     try:
         twit = mytwitter()
@@ -295,13 +289,14 @@ if __name__ == '__main__':
             cfg = new_cfg
         choice = random.choice(['users','tags'])
         methodtoCall = getattr(twit, choice)
+        text_color = random.choice([green,blue,yellow,red,white])
         if cfg:
             status = methodtoCall(cfg[choice])
         else:
             status = methodtoCall()
         try:
             for mesg in status:
-                scope.main(parser.unescape(mesg.text), mesg.user.screen_name)
+                scope.display(parser.unescape(mesg.text), mesg.user.screen_name, text_color)
         except Exception as e:
             logger.error ("Error reading status")
             logger.error ("\t=> %s" % e)
