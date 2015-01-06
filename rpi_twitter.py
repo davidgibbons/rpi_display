@@ -229,6 +229,7 @@ class mytwitter:
             logger.error("Problem with search for: %s" % search_type)
             logger.error("\t with term: %s" % term)
             logger.error("\t => %s" % e )
+            return
         else:
             return res
 
@@ -251,11 +252,11 @@ class mytwitter:
 
 if __name__ == '__main__':
     yellow = (255, 255, 0)
-    white = (255, 255, 255)
-    red = (255, 0, 0)
-    green = (0, 235, 0)
-    blue = (0, 100, 200)
-    black = (0, 0, 0)
+    white  = (255, 255, 255)
+    red    = (255, 100, 0) # pure red is hard to read on a CRT/LCd display over RCA
+    green  = (120, 250, 0) # Green also gets pretty blurry
+    blue   = (0,   100, 200)
+    black  = (0,   0,   0)
     config_file = 'rpi_twitter.yml'
     parser = HTMLParser.HTMLParser()
 
@@ -286,7 +287,7 @@ if __name__ == '__main__':
             cfg = new_cfg
         choice = random.choice(['users','tags'])
         methodtoCall = getattr(twit, choice)
-        text_color = random.choice([green,blue,yellow,red,white])
+        text_color = random.choice([green,red,white])
         if cfg:
             status = methodtoCall(cfg[choice])
         else:
@@ -298,4 +299,5 @@ if __name__ == '__main__':
             logger.error ("Error reading status")
             logger.error ("\t=> %s" % e)
             pygame.quit()
+            break
 
