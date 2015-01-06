@@ -134,7 +134,7 @@ class TextRectException:
 
 
 
-class pyscope :
+class pyscope:
     screen = None;
 
     def __init__(self):
@@ -195,7 +195,7 @@ class pyscope :
                 text_color, (0,0,0), 0)
         except TextRectException:
             text_surface = render_textrect("Error loading tweet",
-                font, my_rect, blue, black, 0)
+                font, my_rect, (255,255,0),(0,0,0), 0)
 
         # Blit the text
         self.screen.blit(text_surface, (15, 25))
@@ -235,18 +235,15 @@ class mytwitter:
     def users (self, users=None):
         """ Expects a list of users to pick from """
         if users == None:
-            users = ['@DepressedDarth',
-             'whitehouse',
-             'ronwyden',
+            users = ['@whitehouse',
+                     '@ronwyden']
 
-            ]
         return self.search("user", random.choice(users))
 
     def tags (self, tags=None):
         if tags == None:
             tags = ['yolo',
-                    'firstworldproblems',
-                    ]
+                    'firstworldproblems']
 
         return self.search("tag", random.choice(tags))
 
