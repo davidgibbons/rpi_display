@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# Uses pygame, pyyaml, python-twitter libraries
 
 import os, pygame, time, random, twitter, socket, fcntl, struct, yaml, logging, HTMLParser
 
@@ -9,19 +10,19 @@ logger = logging.getLogger ('rpi_twitter')
 #
 # config loader
 #
-def load_config_file (config_file): 
+def load_config_file (config_file):
     try:
         cfg = yaml.load (file (config_file))
     except Exception as e:
         logger.error ("Syntax error in configuration file:")
-        logger.error ("\t=> %s" % e) 
+        logger.error ("\t=> %s" % e)
     else:
-        return cfg 
+        return cfg
 
 #
 # application configuration
 #
-def configure (config_file):     
+def configure (config_file):
     cfg = load_config_file (config_file)
     if not cfg:
         logger.error ("Aborting")
@@ -29,16 +30,9 @@ def configure (config_file):
     return cfg
 
 
-def get_ip_address(ifname):
-    try:
-        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        ipaddr = socket.inet_ntoa(fcntl.ioctl(s.fileno(),0x8915, struct.pack('256s', ifname[:15]))[20:24])
-        logger.info ("Ipaddress is %s" % ipaddr)
-    except Exception as e:
-        logger.error ("Problem reading ip address for %s" % ifname )
-        logger.error ("\t=> %s" % e)
-    else:
-        return ipaddr
+def get_ip_address():
+    return [(s.connect(('8.8.8.8', 80)), s.getsockname()[0], s.close()) for s in [socket.socket(socket.AF_INET, socket.SOCK_DGRAM)]][0][1]
+
 
 modify_time = None
 
@@ -48,7 +42,7 @@ def autoreload_config_file (config_file):
     global modify_time
     if modify_time == modified:
         logger.error ("Skipping reload, previous configuration remains in effect.")
-        return        
+        return
     elif not modify_time:
         modify_time = modified
     else:
@@ -78,6 +72,7 @@ def render_textrect(string, font, rect, text_color, background_color, justificat
 
     Success - a surface object with the text rendered onto it.
     Failure - raises a TextRectException if the text won't fit onto the surface.
+    # This function by Author: David Clark (da_clark at shaw.ca)
     """
 
     final_lines = []
@@ -98,23 +93,23 @@ def render_textrect(string, font, rect, text_color, background_color, justificat
             accumulated_line = ""
             for word in words:
                 test_line = accumulated_line + word + " "
-                # Build the line while the words fit.    
+                # Build the line while the words fit.
                 if font.size(test_line)[0] < rect.width:
-                    accumulated_line = test_line 
-                else: 
-                    final_lines.append(accumulated_line) 
-                    accumulated_line = word + " " 
+                    accumulated_line = test_line
+                else:
+                    final_lines.append(accumulated_line)
+                    accumulated_line = word + " "
             final_lines.append(accumulated_line)
-        else: 
-            final_lines.append(requested_line) 
+        else:
+            final_lines.append(requested_line)
 
     # Let's try to write the text out on the surface.
 
-    surface = pygame.Surface(rect.size) 
-    surface.fill(background_color) 
+    surface = pygame.Surface(rect.size)
+    surface.fill(background_color)
 
-    accumulated_height = 0 
-    for line in final_lines: 
+    accumulated_height = 0
+    for line in final_lines:
         if accumulated_height + font.size(line)[1] >= rect.height:
             raise TextRectException, "Once word-wrapped, the text string was too tall to fit in the rect."
         if line != "":
@@ -136,12 +131,12 @@ class TextRectException:
         self.message = message
     def __str__(self):
         return self.message
-    
-    
-    
+
+
+
 class pyscope :
     screen = None;
-    
+
     def __init__(self):
         "Ininitializes a new pygame screen using the framebuffer"
         # Based on "Python GUI in Linux frame buffer"
@@ -149,7 +144,7 @@ class pyscope :
         disp_no = os.getenv("DISPLAY")
         if disp_no:
             print "I'm running under X display = {0}".format(disp_no)
-        
+
         # Check which frame buffer drivers are available
         # Start with fbcon since directfb hangs with composite output
         drivers = ['fbcon', 'directfb', 'svgalib']
@@ -165,15 +160,16 @@ class pyscope :
                 continue
             found = True
             break
-    
+
         if not found:
             raise Exception('No suitable video driver found!')
-        
+
         size = (pygame.display.Info().current_w, pygame.display.Info().current_h)
+        self.size = size
         print "Framebuffer size: %d x %d" % (size[0], size[1])
         self.screen = pygame.display.set_mode(size, pygame.FULLSCREEN)
         # Clear the screen to start
-        self.screen.fill((0, 0, 0))        
+        self.screen.fill((0, 0, 0))
         # Hide the mouse
         pygame.mouse.set_visible(False)
         # Initialise font support
@@ -183,68 +179,55 @@ class pyscope :
 
     def __del__(self):
         "Destructor to make sure pygame shuts down, etc."
-    
+
     def main(self, text, name="Management", timeout=30):
         width, heigth = (656, 416)
         padding = 20
-        yellow = (255, 255, 0)  
-        white = (255, 255, 255) 
+        yellow = (255, 255, 0)
+        white = (255, 255, 255)
         red = (255, 0, 0)
         green = (0, 255, 0)
         blue = (0, 100, 200)
         black = (0, 0, 0)
-        
+
         font_size = 45
-        self.screen.fill((0, 0, 0))        
+        self.screen.fill((0, 0, 0))
         pygame.display.update()
 
-        # Build our app logo
         font = pygame.font.Font(None, font_size)
-        #text_surface = font.render('Twitter (%s)' % "0.1", 
-        #    True, (255, 255, 255))  # White text
-        # Blit the text at 10, 0
-        #self.screen.blit(text_surface, (15, 15))
-        
-        
+
         try:
             # Render a quote
-            my_rect = pygame.Rect((25, 15, 650, 325))
-            text_surface = render_textrect(text, font, my_rect, 
+            my_rect = pygame.Rect((25, 15, self.size[0]-10, self.size[1]-10))
+            text_surface = render_textrect(text, font, my_rect,
                 random.choice([blue, green, yellow]), black, 0)
         except TextRectException:
             text_surface = render_textrect("Error loading tweet",
                 font, my_rect, blue, black, 0)
-    
+
         # Blit the text
-        self.screen.blit(text_surface, (15, 75))
-            
-            
-            
+        self.screen.blit(text_surface, (15, 25))
+
+
+
         # Quote byline, who wrote this kernel of knowledge
         text_surface = font.render('@%s' % name,
-            True, yellow, black) 
+            True, yellow, black)
         name_placement = width - (padding + text_surface.get_width())
         # Blit the text
-        self.screen.blit(text_surface, (name_placement, 410))
-        
-        
+        self.screen.blit(text_surface, (name_placement, self.size[1]-30))
+
+
         # Update the display
         pygame.display.update()
         time.sleep(timeout)
 
-        # Random adc data
-        #yLast = 260
-        #for x in range(10, 509):
-        #    y = random.randrange(30, 350, 2) # Even number from 30 to 350
-        #    pygame.draw.line(self.screen, yellow, (x, yLast), (x+1, y))
-        #    yLast = y
-        #    pygame.display.update()
 
 
 class mytwitter:
     def __init__(self):
-        twitter_config = configure("twitter.yml")
-        self.api = twitter.Api(**twitter_config)
+        twitter_config = configure('twitter.yml')
+        self.api = twitter.Api(**twitter_config
 
     def search (self, search_type, term, count=5):
         try:
@@ -263,54 +246,29 @@ class mytwitter:
         """ Expects a list of users to pick from """
         if users == None:
             users = ['@DepressedDarth',
-             'DEVOPS_BORAT',
-             'BigDataBorat',
-             'notzuckerberg',
-             'DeathStarPR',
-             'TheBatman',
-             'drunkhulk',
-             'OhWonka',
-             'mr_mustash',
-             'emilyst',
-             'puppetlabs',
-             'joshland',
-             'eff',
+             'whitehouse',
              'ronwyden',
-             'kartar',
-             
+
             ]
         return self.search("user", random.choice(users))
-        
+
     def tags (self, tags=None):
         if tags == None:
-            tags = ['geek',
-                    'linux',
-                    'devops',
-                    'sysadmin',
-                    'tech',
-                    'unix',
-                    'linux',
-                    'automation',
-                    'portland',
-                    'pdx',
-                    'keepPortlandweird',
-                    'nerdlife',
-                    'nerd',
-                    'hadoop',
-                    'puppet',
+            tags = ['yolo',
+                    'firstworldproblems',
                     ]
-                    
+
         return self.search("tag", random.choice(tags))
-        
-            
-    
-    
+
+
+
+
 if __name__ == '__main__':
 
     config_file = 'rpi_twitter.yml'
     parser = HTMLParser.HTMLParser()
 
-    # Create an instance of the PyScope class    
+    # Create an instance of the PyScope class
     try:
 		scope = pyscope()
     except Exception as e:
@@ -318,8 +276,8 @@ if __name__ == '__main__':
 		logger.error ("\t=> %s" % e)
 		pygame.quit()
 
-    ip = get_ip_address('eth0')
-    if ip: 
+    ip = get_ip_address()
+    if ip:
         scope.main("Our IP appears to be: %s" % ip, timeout=10)
     else:
         scope.main("Problem reading ip address, we may not work")
@@ -330,6 +288,7 @@ if __name__ == '__main__':
         logger.error ("Error loading twitter instance")
         logger.error ("\t=> %s" % e)
 
+    # Begin main application loop
     while True:
         new_cfg = autoreload_config_file(config_file)
         if new_cfg:
@@ -347,4 +306,4 @@ if __name__ == '__main__':
             logger.error ("Error reading status")
             logger.error ("\t=> %s" % e)
             pygame.quit()
-        
+
