@@ -180,7 +180,7 @@ class pyscope:
     def __del__(self):
         "Destructor to make sure pygame shuts down, etc."
 
-    def display(self, text, name="Management", timeout=30, text_color=(255, 255, 0)):
+    def display(self, text, name="Management", text_color=(255, 255, 0), timeout=30):
         padding = 20
         font_size = 45
         self.screen.fill((0, 0, 0))
@@ -204,7 +204,7 @@ class pyscope:
         # Colored yellow, black background
         text_surface = font.render('@%s' % name,
             True, (255, 255, 0), (0, 0, 0))
-        name_placement = self.size[0] - (padding + text_surface.get_width())
+        name_placement = 640 - (padding + text_surface.get_width())
         # Blit the text
         self.screen.blit(text_surface, (name_placement, self.size[1]-30))
 
@@ -269,7 +269,7 @@ if __name__ == '__main__':
 
     ip = get_ip_address()
     if ip:
-        scope.display("Our IP appears to be: %s" % ip, timeout=10)
+        scope.display("Our IP appears to be: %s" % ip, yellow, timeout=10)
     else:
         scope.display("Problem reading ip address, we may not work")
 
