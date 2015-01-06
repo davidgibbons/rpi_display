@@ -269,7 +269,7 @@ if __name__ == '__main__':
 
     ip = get_ip_address()
     if ip:
-        scope.display("Our IP appears to be: %s" % ip, yellow, timeout=10)
+        scope.display("Our IP appears to be: %s" % ip, text_color=yellow, timeout=10)
     else:
         scope.display("Problem reading ip address, we may not work")
 
